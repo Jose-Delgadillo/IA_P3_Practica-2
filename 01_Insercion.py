@@ -1,5 +1,4 @@
 """
-Prácticas de Programación IV
 Métodos de Ordenamiento - Inserción (InsertionSort)
 
 Este código implementa el algoritmo de ordenamiento por inserción. Es un algoritmo simple
