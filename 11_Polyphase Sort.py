@@ -15,12 +15,8 @@ Observaciones:
 - Complejidad: O(n log n)
 """
 
-"""
-Polyphase Sort (corregido) - Simulación en memoria con 3 cintas
-"""
-
 def merge(lista1, lista2):
-    """Fusión de dos listas ordenadas."""
+    """Fusiona dos listas ordenadas en una lista ordenada."""
     resultado = []
     i = j = 0
     while i < len(lista1) and j < len(lista2):
@@ -34,52 +30,54 @@ def merge(lista1, lista2):
     resultado.extend(lista2[j:])
     return resultado
 
-def polyphase_sort_simulado(runs):
+def merge_por_fases(runs):
     """
-    Versión corregida de ordenamiento polifásico simulado.
+    Simula la fusión en fases de múltiples runs ordenados,
+    fusionando de dos en dos hasta quedar un único run.
     
-    runs -- lista de listas ordenadas (simulando archivos)
+    runs -- lista de runs ordenadas (listas).
     """
-    # Inicialmente todas las runs están en la cinta A
-    cinta_A = runs.copy()
-    cinta_B = []
-    cinta_C = []
-
     fase = 1
-    while True:
-        print(f"\nFase {fase}:")
-        nueva_cinta = []
-
-        # Mezclamos de dos en dos desde cinta_A y cinta_B
-        while cinta_A and cinta_B:
-            run_A = cinta_A.pop(0)
-            run_B = cinta_B.pop(0)
-            mezcla = merge(run_A, run_B)
-            print(f"Mezclando {run_A} + {run_B} -> {mezcla}")
-            nueva_cinta.append(mezcla)
-
-        # Mover sobrantes (si hay) sin mezclar
-        nueva_cinta.extend(cinta_A)
-        nueva_cinta.extend(cinta_B)
-
-        # Si solo queda una run total, hemos terminado
-        if len(nueva_cinta) == 1:
-            return nueva_cinta[0]
-
-        # Rotamos las cintas: C -> A, nueva -> B, vaciamos C
-        cinta_A, cinta_B, cinta_C = cinta_C, nueva_cinta, []
+    runs_actuales = runs.copy()
+    
+    while len(runs_actuales) > 1:
+        print(f"\nFase {fase}: {len(runs_actuales)} runs a fusionar")
+        nuevos_runs = []
+        
+        # Fusionar pares de runs
+        for i in range(0, len(runs_actuales), 2):
+            if i + 1 < len(runs_actuales):
+                run1 = runs_actuales[i]
+                run2 = runs_actuales[i + 1]
+                fusion = merge(run1, run2)
+                print(f"Mezclando {run1} + {run2} -> {fusion}")
+                nuevos_runs.append(fusion)
+            else:
+                # Si queda un run sin pareja, pasa directo a la siguiente fase
+                print(f"Run sin pareja que pasa directo: {runs_actuales[i]}")
+                nuevos_runs.append(runs_actuales[i])
+        
+        runs_actuales = nuevos_runs
         fase += 1
+    
+    return runs_actuales[0] if runs_actuales else []
 
-# Bloque principal para probar
+# Bloque principal para probar la función
 if __name__ == "__main__":
     runs = [
-        [3], [8], [2], [5],
-        [1], [9], [4], [7],
+        [3],
+        [8],
+        [2],
+        [5],
+        [1],
+        [9],
+        [4],
+        [7],
         [6]
     ]
-
+    
     print("Runs iniciales:", runs)
-
-    resultado = polyphase_sort_simulado(runs)
-
-    print("\nResultado ordenado final:", resultado)
+    
+    resultado_final = merge_por_fases(runs)
+    
+    print("\nResultado ordenado final:", resultado_final)
